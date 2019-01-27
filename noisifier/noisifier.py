@@ -2,7 +2,7 @@ import os
 import random
 import click
 import librosa
-
+import numpy as np
 
 SUPPORTED_EXTENSIONS = [
     '.wav',
@@ -19,7 +19,8 @@ class NoiseBank:
             fname, fext = os.path.splitext(noise_file)
             if fext in SUPPORTED_EXTENSIONS:
                 fname = os.path.basename(fname)
-                noise = librosa.core.load(noise_file)
+                noise, _ = librosa.core.load(noise_file,
+                                             sr=self.config['sample_rate'])
                 self.noises.append((fname, noise))
 
         for noise_path in config['noises']:
@@ -57,7 +58,7 @@ class Noisifier:
         dirpath, fname = os.path.dirname(file), os.path.basename(file)
         fname, fext = os.path.splitext(fname)
         for noise_name, noise in self.noise_bank.get_noises():
-            Noisifier.add_noise(
+            self.add_noise(
                 file,
                 noise,
                 os.path.join(
@@ -66,6 +67,17 @@ class Noisifier:
                     fname + '.' + noise_name + fext
                 )
             )
-    @staticmethod
-    def add_noise(input_file, noise, output_file):
+
+    def add_noise(self, input_file, noise, output_file):
         click.echo(f'Beep: {input_file} -> {output_file}')
+        audio, _ = librosa.core.load(input_file, sr=self.config['sample_rate'])
+        noise = np.roll(noise, random.randrange(len(noise)))
+        noise = np.tile(noise, reps=(len(audio) - 1) // len(noise) + 1)
+        noise = noise[:len(audio)]
+        audio += self.config['noise_coeff'] * noise
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)
+        librosa.output.write_wav(
+            output_file,
+            audio,
+            self.config['sample_rate']
+        )

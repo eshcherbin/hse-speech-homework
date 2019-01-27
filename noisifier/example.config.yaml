@@ -1,4 +1,6 @@
-n_noises: 4
+noise_coeff: 0.05
+sample_rate: 16000
+n_noises: 3
 noises:
   - 'example_noises/aasp_challenge_2013_gsm'
   - 'example_noises/ASTERISK_MUSIC_gsm'
