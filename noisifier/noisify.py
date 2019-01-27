@@ -1,12 +1,11 @@
-import sys
 import os
+import random
 import click
+import yaml
 
-from noisifier import Noisifier, NoiseBank, Config
+from noisifier import Noisifier, NoiseBank, SUPPORTED_EXTENSIONS
 
-SUPPORTED_EXTENSIONS = ['.wav', '.flac']
-OUTPUT_SUFFIX = '.noise'
-DEFAULT_CONFIG_FILE = 'bg_noise.config.yaml'
+DEFAULT_CONFIG_FILE = 'example.config.yaml'
 DEFAULT_OUTPUT_DIR = 'noisifier_output'
 
 
@@ -16,10 +15,13 @@ DEFAULT_OUTPUT_DIR = 'noisifier_output'
                 #               'with audio files that need to be noisified',
                 type=click.Path(exists=True))
 @click.option('--output_dir', '-o', default=DEFAULT_OUTPUT_DIR,
-              help='Path to the directory with resulting files')
+              help='Path to the directory with resulting files',
+              type=click.Path())
 @click.option('--config_file', '-c', default=DEFAULT_CONFIG_FILE,
-              help='Path to the config file')
-def noisify(audio, output_dir, config_file):
+              help='Path to the config file',
+              type=click.File())
+@click.option('--seed', default=None, help='Random seed')
+def noisify(audio, output_dir, config_file, seed):
     """
     Adds noise like background noise or beeps to the given audio file(s).
     When the directory is given, it is processed recursively, and
@@ -29,14 +31,13 @@ def noisify(audio, output_dir, config_file):
     :param output_dir: path to the directory with the resulting files
     :param config_file: path to the noise config file
     """
-    try:
-        config = Config.load(config_file)
-    except:
-        click.echo(f'Problem when loading config from {config_file}', err=True)
-        sys.exit(1)
 
+    if seed is not None:
+        random.seed(seed)
+
+    config = yaml.load(config_file)
     noise_bank = NoiseBank(config)
-    noisifier = Noisifier(noise_bank)
+    noisifier = Noisifier(noise_bank, config)
 
     audio = os.path.abspath(audio)
     output_dir = os.path.abspath(output_dir)

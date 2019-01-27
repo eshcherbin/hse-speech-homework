@@ -1,0 +1,5 @@
+n_noises: 4
+noises:
+  - 'example_noises/aasp_challenge_2013_gsm'
+  - 'example_noises/ASTERISK_MUSIC_gsm'
+  - 'example_noises/FRESOUND_BEEPS_gsm'
