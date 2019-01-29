@@ -1,0 +1,4 @@
+click
+librosa
+pyyaml
+numpy
