@@ -5,7 +5,6 @@ import click
 import librosa
 import numpy as np
 
-
 SUPPORTED_EXTENSIONS = [
     '.wav',
     '.flac',
@@ -76,7 +75,7 @@ class NoiseBank:
 
     def load_noise_(self, noise_tuple):
         noise_name, noise_file = noise_tuple
-        duration=self.config['duration'] if self.config['duration'] else None
+        duration = self.config['duration']
         noise, _ = librosa.core.load(noise_file,
                                      duration=duration,
                                      sr=self.config['sample_rate'])

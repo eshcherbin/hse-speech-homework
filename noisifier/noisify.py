@@ -3,6 +3,7 @@ import os
 import random
 import click
 import yaml
+from collections import defaultdict
 
 from noisifier import Noisifier, NoiseBank, SUPPORTED_EXTENSIONS
 
@@ -28,7 +29,7 @@ def noisify(audio, output_dir, config_file):
     `output_audio` is regarded as the name of the output directory.
     """
 
-    config = yaml.load(config_file)
+    config = defaultdict(lambda: None, yaml.load(config_file))
     noise_bank = NoiseBank(config)
     noisifier = Noisifier(noise_bank, config)
 
