@@ -17,16 +17,17 @@ DEFAULT_OUTPUT_DIR = 'noisifier_output'
                 #               'with audio files that need to be noisified',
                 type=click.Path(exists=True))
 @click.option('--output_dir', '-o', default=DEFAULT_OUTPUT_DIR,
-              help='Path to the directory with resulting files',
+              help=f'Path to the directory with resulting files, '
+                   f'default: "{DEFAULT_OUTPUT_DIR}"',
               type=click.Path())
 @click.option('--config_file', '-c', default=DEFAULT_CONFIG_FILE,
-              help='Path to the config file',
+              help=f'Path to the config file, '
+                   f'default: "{DEFAULT_CONFIG_FILE}"',
               type=click.File())
 def noisify(audio, output_dir, config_file):
     """
     Adds noise like background noise or beeps to the given audio file(s).
-    When the directory is given, it is processed recursively, and
-    `output_audio` is regarded as the name of the output directory.
+    When a directory is given, it is processed recursively.
     """
 
     config = defaultdict(lambda: None, yaml.load(config_file))
