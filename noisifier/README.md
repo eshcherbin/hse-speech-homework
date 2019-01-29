@@ -12,7 +12,7 @@ Audio data augmentation by adding noise.
 
 ### Config
 The configuration file describes the noise dataset as well as some potentially unimportant execution parameters.
-It has a self-descriptive easy structure and is written in [YAML](https://yaml.org/):
+It has a self-descriptive easy structure and is written in [YAML](https://yaml.org/)
 
 ### Example
 The example was tested with Python 3.6, note that you should have the dependencies listed
