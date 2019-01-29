@@ -4,10 +4,10 @@ sample_rate: 32000
 n_background_noises: 2
 n_beep_noises: 2
 background_noises:
-  - 'example_noises/aasp_challenge_2013_gsm'
-  - 'example_noises/ASTERISK_MUSIC_gsm'
+- 'example_noises/aasp_challenge_2013_gsm'
+- 'example_noises/ASTERISK_MUSIC_gsm'
 beep_noises:
-  - 'example_noises/FRESOUND_BEEPS_gsm'
+- 'example_noises/FRESOUND_BEEPS_gsm'
 
 # execution config
 verbose: True
