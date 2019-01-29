@@ -76,7 +76,9 @@ class NoiseBank:
 
     def load_noise_(self, noise_tuple):
         noise_name, noise_file = noise_tuple
+        duration=self.config['duration'] if self.config['duration'] else None
         noise, _ = librosa.core.load(noise_file,
+                                     duration=duration,
                                      sr=self.config['sample_rate'])
         return noise_name, noise
 
