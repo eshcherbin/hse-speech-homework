@@ -102,7 +102,7 @@ class Noisifier:
             output_file = os.path.join(
                 output_dir,
                 os.path.relpath(dirpath, audio_root),
-                fname + '.' + noise_name + fext
+                fname + '.' + noise_name + '.wav'
             )
             if self.config['verbose']:
                 click.echo(f'Beep: {file} -> {output_file}')
