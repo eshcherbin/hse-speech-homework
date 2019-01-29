@@ -1,7 +1,14 @@
+# noises config
 noise_coeff: 0.05
-sample_rate: 16000
-n_noises: 3
-noises:
+sample_rate: 32000
+n_background_noises: 2
+n_beep_noises: 2
+background_noises:
   - 'example_noises/aasp_challenge_2013_gsm'
   - 'example_noises/ASTERISK_MUSIC_gsm'
+beep_noises:
   - 'example_noises/FRESOUND_BEEPS_gsm'
+
+# execution config
+verbose: True
+random_seed: 225

@@ -20,24 +20,19 @@ DEFAULT_OUTPUT_DIR = 'noisifier_output'
 @click.option('--config_file', '-c', default=DEFAULT_CONFIG_FILE,
               help='Path to the config file',
               type=click.File())
-@click.option('--seed', default=None, help='Random seed')
-def noisify(audio, output_dir, config_file, seed):
+def noisify(audio, output_dir, config_file):
     """
     Adds noise like background noise or beeps to the given audio file(s).
     When the directory is given, it is processed recursively, and
     `output_audio` is regarded as the name of the output directory.
-
-    :param audio: path to the input file or directory
-    :param output_dir: path to the directory with the resulting files
-    :param config_file: path to the noise config file
     """
-
-    if seed is not None:
-        random.seed(seed)
 
     config = yaml.load(config_file)
     noise_bank = NoiseBank(config)
     noisifier = Noisifier(noise_bank, config)
+
+    if config['random_seed']:
+        random.seed(config['random_seed'])
 
     audio = os.path.abspath(audio)
     output_dir = os.path.abspath(output_dir)
