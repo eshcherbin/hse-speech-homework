@@ -1,6 +1,6 @@
 # noises config
 noise_coeff: 0.05
-sample_rate: 32000
+sample_rate: 48000
 duration: 600
 n_background_noises: 2
 n_beep_noises: 2
