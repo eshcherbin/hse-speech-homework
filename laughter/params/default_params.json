@@ -1,0 +1,4 @@
+{
+    "predictor": "predictors.MyPredictor",
+    "extractor": "feature_extractors.MyExtractor"
+}
