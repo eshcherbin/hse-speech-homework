@@ -6,8 +6,7 @@ import pandas as pd
 import scipy.io.wavfile as wav
 
 from laughter_classification.utils import chunks, in_any, interv_to_range, get_sname
-
-from laughter_prediction.sample_audio import sample_wav_by_time
+from laughter_prediction.feature_extractors import MyExtractor
 
 
 class SSPNetDataSampler:
@@ -69,7 +68,7 @@ class SSPNetDataSampler:
         :param frame_sec: int, length of each frame in sec
         :return: pandas.DataFrame with sampled audio
         """
-        data = sample_wav_by_time(wav_path, frame_sec)
+        data = MyExtractor(frame_sec).extract_features(wav_path)
         labels = self.get_labels_for_file(wav_path, frame_sec)
         df = pd.concat([data, labels], axis=1)
         return df
@@ -89,13 +88,14 @@ class SSPNetDataSampler:
         :return:
         """
         fullpaths = self.get_valid_wav_paths()[:naudio]
-        dataframes = [self.df_from_file(wav_path, frame_sec) for wav_path in fullpaths]
+        dataframes = [self.df_from_file(wav_path, frame_sec)
+                      for wav_path in fullpaths]
         df = pd.concat(dataframes)
 
-        colnames = ["V{}".format(i) for i in range(df.shape[1] - 2)]
-        colnames.append("IS_LAUGHTER")
-        colnames.append("SNAME")
-        df.columns = colnames
+        # colnames = ["V{}".format(i) for i in range(df.shape[1] - 2)]
+        # colnames.append("IS_LAUGHTER")
+        # colnames.append("SNAME")
+        # df.columns = colnames
 
         if save_path is not None:
             if not os.path.isfile(save_path) or force_save:

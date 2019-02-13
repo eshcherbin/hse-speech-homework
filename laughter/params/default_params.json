@@ -1,4 +1,4 @@
 {
-    "predictor": "predictors.StrictLargeXgboostPredictor",
-    "extractor": "feature_extractors.PyAAExtractor"
+    "predictor": "predictors.MyPredictor",
+    "extractor": "feature_extractors.MyExtractor"
 }

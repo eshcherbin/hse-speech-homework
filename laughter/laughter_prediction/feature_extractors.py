@@ -2,7 +2,11 @@ import os
 import tempfile
 
 import pandas as pd
-import laughter_classification.psf_features as psf_features
+import numpy as np
+import scipy.io.wavfile as wav
+import librosa
+from laughter_prediction.sample_audio import sample_wav_by_time
+# import laughter_classification.psf_features as psf_features
 
 
 class FeatureExtractor:
@@ -19,7 +23,7 @@ class FeatureExtractor:
 class PyAAExtractor(FeatureExtractor):
     """Python Audio Analysis features extractor"""
     def __init__(self):
-        self.extract_script = "./extract_pyAA_features.py"
+        self.extract_script = "./laughter_prediction/extract_pyAA_features.py"
         self.py_env_name = "ipykernel_py2"
 
     def extract_features(self, wav_path):
@@ -27,7 +31,35 @@ class PyAAExtractor(FeatureExtractor):
             feature_save_path = tmp_file.name
             cmd = "python \"{}\" --wav_path=\"{}\" " \
                   "--feature_save_path=\"{}\"".format(self.extract_script, wav_path, feature_save_path)
-            os.system("source activate {}; {}".format(self.py_env_name, cmd))
+            os.system('bash -c "source activate {}; {}"'.format(self.py_env_name, cmd))
 
             feature_df = pd.read_csv(feature_save_path)
         return feature_df
+
+
+class MyExtractor(FeatureExtractor):
+    def __init__(self, frame_len_sec=0.1):
+        self.frame_len_sec = frame_len_sec
+
+    def extract_features(self, wav_path):
+        y, sr = librosa.load(wav_path, sr=None)
+        # print(y)
+        frame_len = int(sr * self.frame_len_sec)
+        mfcc = [librosa.feature.mfcc(y[frame:frame + frame_len],
+                                     sr).mean(axis=1)
+                for frame in range(0, len(y) - frame_len + 1, frame_len)]
+        mfcc = np.vstack(mfcc)
+        # print(mfcc.shape)
+        # print(len(y) - frame_len + 1, frame_len // 4)
+        melspec = [librosa.feature.melspectrogram(y[frame:frame + frame_len],
+                                                  sr).mean(axis=1)
+                   for frame in range(0, len(y) - frame_len + 1, frame_len)]
+        melspec = np.vstack(melspec)
+        # print(melspec.shape)
+        # print(np.hstack([mfcc, melspec]).shape)
+        df = pd.DataFrame(np.hstack([mfcc, melspec]))
+        cols = [f'MFCC_{i}' for i in range(mfcc.shape[1])] + \
+               [f'MEL_{i}' for i in range(melspec.shape[1])]
+        df.columns = cols
+        # print(df.head())
+        return df

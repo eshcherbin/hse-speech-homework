@@ -2,6 +2,8 @@ import numpy as np
 
 from sklearn.externals import joblib
 from sklearn.preprocessing import StandardScaler
+import torch
+import torch.nn.functional as F
 
 
 class Predictor:
@@ -74,7 +76,6 @@ class StrictLargeXgboostPredictor(XgboostPredictor):
 
 
 class RnnPredictor(Predictor):
-    # Your code here
     def predict(self, X):
         pass
 

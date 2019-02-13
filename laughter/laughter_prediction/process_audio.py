@@ -64,12 +64,12 @@ def my_import(name):
 
 
 def main():
-    DEFALUT_PARAMS = "params/default_params.json"
+    DEFAULT_PARAMS = "params/default_params.json"
 
     parser = argparse.ArgumentParser(description='Script for prediction laughter intervals for .wav file')
     parser.add_argument('--wav_path', type=str, help='Path to .wav file')
-    parser.add_argument('--params', type=str, default=DEFALUT_PARAMS,
-                        help='/JSON file with the classification parameters. Default: ' + DEFALUT_PARAMS + '.')
+    parser.add_argument('--params', type=str, default=DEFAULT_PARAMS,
+                        help='/JSON file with the classification parameters. Default: ' + DEFAULT_PARAMS + '.')
     args = parser.parse_args()
 
     with open(args.params, 'r') as params_file:
@@ -81,10 +81,11 @@ def main():
     extractor = klass()
 
     feature_df = extractor.extract_features(args.wav_path)
-    pred_classes = predictor.predict(feature_df.as_matrix())
-    intervals = predicted_to_intervals(pred_classes, frame_sec=0.01, error_dist=0.1)
-    print("Target intervals")
-    print(intervals)
+    print(feature_df)
+    # pred_classes = predictor.predict(feature_df.as_matrix())
+    # intervals = predicted_to_intervals(pred_classes, frame_sec=0.01, error_dist=0.1)
+    # print("Target intervals")
+    # print(intervals)
 
 
 if __name__ == '__main__':
