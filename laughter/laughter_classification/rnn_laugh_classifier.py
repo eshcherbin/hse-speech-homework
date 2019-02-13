@@ -17,25 +17,36 @@ class RnnLaughClassifier(nn.Module):
 
         self.input_size2 = input_size2
         self.hidden_size2 = hidden_size2
-        self.lstm1 = nn.LSTM(input_size1, hidden_size1)
         self.lstm2 = nn.LSTM(input_size2, hidden_size2)
         self.fc2 = nn.Linear(hidden_size1 + hidden_size2, 2)
 
-    def init_hidden(self):
-        self.hidden1 = (
-            torch.zeros(1, 1, self.hidden_size1),
-            torch.zeros(1, 1, self.hidden_size1)
-        )
-        self.hidden2 = (
-            torch.zeros(1, 1, self.hidden_size2),
-            torch.zeros(1, 1, self.hidden_size2)
-        )
+        self.init_hidden()
+
+    def init_hidden(self, cuda=False):
+        if cuda:
+            self.hidden1 = (
+                torch.zeros(1, 1, self.hidden_size1).cuda(),
+                torch.zeros(1, 1, self.hidden_size1).cuda()
+            )
+            self.hidden2 = (
+                torch.zeros(1, 1, self.hidden_size2).cuda(),
+                torch.zeros(1, 1, self.hidden_size2).cuda()
+            )
+        else:
+            self.hidden1 = (
+                torch.zeros(1, 1, self.hidden_size1),
+                torch.zeros(1, 1, self.hidden_size1)
+            )
+            self.hidden2 = (
+                torch.zeros(1, 1, self.hidden_size2),
+                torch.zeros(1, 1, self.hidden_size2)
+            )
 
     def forward(self, X):
         # X1, X2 = torch.split(X, [self.input_size1, self.input_size2], dim=1)
         X1, X2 = X
 
-        print(X1.shape)
+        # print(X1.shape)
         lstm_out1, _ = self.lstm1(X1.contiguous().view(-1, 1, self.input_size1),
                                   self.hidden1)
         out1 = self.fc1(lstm_out1.view(-1, self.hidden_size1))
@@ -55,8 +66,8 @@ def train_model(model, dataset, optimizer, loss_fn, n_epochs=10,
     if seed is not None:
         torch.manual_seed(seed)
 
-    # model = model.cuda()
-    # dataset = [(audio.cuda(), labels.cuda()) for audio, labels in dataset]
+    model = model.cuda()
+    dataset = [((mfcc.cuda(), mel.cuda()), labels.cuda()) for (mfcc, mel), labels in dataset]
 
     start_time = timer()
     for epoch in range(n_epochs):
@@ -67,7 +78,7 @@ def train_model(model, dataset, optimizer, loss_fn, n_epochs=10,
         for audio, labels in dataset:
             # print(labels.dtype)
             model.zero_grad()
-            model.init_hidden()
+            model.init_hidden(cuda=True)
             out1, out2 = model(audio)
             loss1 = loss_fn(out1, labels)
             loss2 = loss_fn(out2, labels)
@@ -76,6 +87,7 @@ def train_model(model, dataset, optimizer, loss_fn, n_epochs=10,
             optimizer.step()
 
             mean_loss += loss.item()
+        mean_loss /= len(dataset)
 
         print(f'Epoch {epoch} finished in {timer() - epoch_start_time:.3f} '
               f'seconds, mean loss: {mean_loss:.3f}')

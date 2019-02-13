@@ -81,11 +81,10 @@ def main():
     extractor = klass()
 
     feature_df = extractor.extract_features(args.wav_path)
-    print(feature_df)
-    # pred_classes = predictor.predict(feature_df.as_matrix())
-    # intervals = predicted_to_intervals(pred_classes, frame_sec=0.01, error_dist=0.1)
-    # print("Target intervals")
-    # print(intervals)
+    pred_classes = predictor.predict(feature_df.as_matrix())
+    intervals = predicted_to_intervals(pred_classes, frame_sec=0.01, error_dist=0.1)
+    print("Target intervals")
+    print(intervals)
 
 
 if __name__ == '__main__':
