@@ -1,4 +1,4 @@
 {
-    "predictor": "predictors.MyPredictor",
+    "predictor": "predictors.RnnPredictor",
     "extractor": "feature_extractors.MyExtractor"
 }

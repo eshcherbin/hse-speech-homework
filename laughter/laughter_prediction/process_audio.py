@@ -42,7 +42,7 @@ def predicted_to_intervals(pred_classes, frame_sec, error_dist=None):
     if error_dist is None:
         error_dist = frame_sec * 1.5
     frames_to_times = [frame_sec * i for i, pred in enumerate(pred_classes) if pred == 1]
-    intervals_g = intervals_gen(frames_to_times, frame_sec=frame_sec, error_dist=error_dist)
+    intervals_g = intervals_gen(frames_to_times, frame_sec=frame_sec, error_dist=error_dist, min_frames=1)
     intervals = list(intervals_g)
     return intervals
 
@@ -82,7 +82,7 @@ def main():
 
     feature_df = extractor.extract_features(args.wav_path)
     pred_classes = predictor.predict(feature_df.as_matrix())
-    intervals = predicted_to_intervals(pred_classes, frame_sec=0.01, error_dist=0.1)
+    intervals = predicted_to_intervals(pred_classes, frame_sec=0.1, error_dist=0.2)
     print("Target intervals")
     print(intervals)
 
