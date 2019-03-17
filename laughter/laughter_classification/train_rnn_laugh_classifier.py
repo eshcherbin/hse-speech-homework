@@ -4,17 +4,12 @@ import click
 
 from sklearn.model_selection import train_test_split
 import pandas as pd
-import torch
-import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 
 from laughter_classification.rnn_laugh_classifier import *
 
 
-# DATASET_FILE = 'data/sspnet_dataset_50.csv'
-# DATASET_FILE = 'data/sspnet_dataset_500.csv'
-# DATASET_FILE = 'data/sspnet_dataset_all.csv'
 CORPUS_ROOT = 'vocalizationcorpus'
 FRAME_LEN_SEC = 0.1
 N_MFCC = 20
@@ -24,7 +19,6 @@ N_MEL_HID = 50
 N_EPOCHS = 50
 LR = 0.01
 SEED = 117
-# MODEL_PATH = 'models/model_dataset_all.pth'
 
 
 def generate_data(dataset_file):

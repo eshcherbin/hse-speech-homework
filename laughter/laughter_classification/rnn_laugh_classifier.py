@@ -2,8 +2,6 @@ from timeit import default_timer as timer
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
 
 
 class RnnLaughClassifier(nn.Module):
@@ -62,7 +60,7 @@ class RnnLaughClassifier(nn.Module):
 
 
 def train_model(model, train_dataset, optimizer, loss_fn, n_epochs=10,
-                save_path='models/model.pth', seed=None):
+                save_path=None, seed=None):
     if seed is not None:
         torch.manual_seed(seed)
 
