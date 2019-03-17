@@ -61,13 +61,13 @@ class RnnLaughClassifier(nn.Module):
         return out1, out2
 
 
-def train_model(model, dataset, optimizer, loss_fn, n_epochs=10,
+def train_model(model, train_dataset, optimizer, loss_fn, n_epochs=10,
                 save_path='models/model.pth', seed=None):
     if seed is not None:
         torch.manual_seed(seed)
 
     model = model.cuda()
-    dataset = [((mfcc.cuda(), mel.cuda()), labels.cuda()) for (mfcc, mel), labels in dataset]
+    train_dataset = [((mfcc.cuda(), mel.cuda()), labels.cuda()) for (mfcc, mel), labels in train_dataset]
 
     start_time = timer()
     for epoch in range(n_epochs):
@@ -75,10 +75,12 @@ def train_model(model, dataset, optimizer, loss_fn, n_epochs=10,
 
         mean_loss = 0
         # print(dataset)
-        for audio, labels in dataset:
+        for audio, labels in train_dataset:
+            # print(labels.is_cuda)
             # print(labels.dtype)
             model.zero_grad()
             model.init_hidden(cuda=True)
+            # model.init_hidden()
             out1, out2 = model(audio)
             loss1 = loss_fn(out1, labels)
             loss2 = loss_fn(out2, labels)
@@ -87,11 +89,11 @@ def train_model(model, dataset, optimizer, loss_fn, n_epochs=10,
             optimizer.step()
 
             mean_loss += loss.item()
-        mean_loss /= len(dataset)
+        mean_loss /= len(train_dataset)
 
         print(f'Epoch {epoch} finished in {timer() - epoch_start_time:.3f} '
-              f'seconds, mean loss: {mean_loss:.3f}')
-    print(f'Learning {epoch} finished in'
+              f'seconds, mean loss: {mean_loss:.3f}, ')
+    print(f'Learning finished in'
           f' {timer() - start_time:.3f} seconds')
 
     if save_path is not None:

@@ -68,6 +68,7 @@ class SSPNetDataSampler:
         :param frame_sec: int, length of each frame in sec
         :return: pandas.DataFrame with sampled audio
         """
+        print(f'Extracting features from {wav_path}')
         data = MyExtractor(frame_sec).extract_features(wav_path)
         labels = self.get_labels_for_file(wav_path, frame_sec)
         df = pd.concat([data, labels], axis=1)

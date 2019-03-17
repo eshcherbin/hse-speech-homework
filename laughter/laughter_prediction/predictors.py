@@ -78,7 +78,7 @@ class StrictLargeXgboostPredictor(XgboostPredictor):
 
 
 class RnnPredictor(Predictor):
-    def __init__(self, model_='models/model_dataset_500.pth'):
+    def __init__(self, model_='models/model_dataset_all.pth'):
         if isinstance(model_, str):
             self.model = RnnLaughClassifier(N_MFCC, N_MEL, N_MFCC_HID, N_MEL_HID)
             self.model.load_state_dict(torch.load(model_))
@@ -94,6 +94,7 @@ class RnnPredictor(Predictor):
         X1 = torch.Tensor(X1)
         X2 = torch.Tensor(X2)
         with torch.no_grad():
+            self.model.init_hidden()
             _, out2 = self.model((X1, X2))
             p = F.softmax(out2, dim=1)
         return p.data

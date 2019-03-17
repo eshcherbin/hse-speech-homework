@@ -49,14 +49,17 @@ class MyExtractor(FeatureExtractor):
                                      sr).mean(axis=1)
                 for frame in range(0, len(y) - frame_len + 1, frame_len)]
         mfcc = np.vstack(mfcc)
+        # mfcc = librosa.feature.mfcc(y, sr, hop_length=frame_len)
         # print(mfcc.shape)
         # print(len(y) - frame_len + 1, frame_len // 4)
         melspec = [librosa.feature.melspectrogram(y[frame:frame + frame_len],
                                                   sr).mean(axis=1)
                    for frame in range(0, len(y) - frame_len + 1, frame_len)]
         melspec = np.vstack(melspec)
+        # melspec = librosa.feature.melspectrogram(y, sr, hop_length=frame_len)
+        melspec = np.log10(melspec)
         # print(melspec.shape)
-        # print(np.hstack([mfcc, melspec]).shape)
+        # print(np.hstack([mfcc.T, melspec.T]).shape)
         df = pd.DataFrame(np.hstack([mfcc, melspec]))
         cols = [f'MFCC_{i}' for i in range(mfcc.shape[1])] + \
                [f'MEL_{i}' for i in range(melspec.shape[1])]
