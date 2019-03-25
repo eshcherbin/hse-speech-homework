@@ -10,35 +10,27 @@ class RnnLaughClassifier(nn.Module):
 
         self.input_size1 = input_size1
         self.hidden_size1 = hidden_size1
+        self.hidden1 = None
         self.lstm1 = nn.LSTM(input_size1, hidden_size1)
         self.fc1 = nn.Linear(hidden_size1, 2)
 
         self.input_size2 = input_size2
         self.hidden_size2 = hidden_size2
+        self.hidden2 = None
         self.lstm2 = nn.LSTM(input_size2, hidden_size2)
         self.fc2 = nn.Linear(hidden_size1 + hidden_size2, 2)
 
         self.init_hidden()
 
-    def init_hidden(self, cuda=False):
-        if cuda:
-            self.hidden1 = (
-                torch.zeros(1, 1, self.hidden_size1).cuda(),
-                torch.zeros(1, 1, self.hidden_size1).cuda()
-            )
-            self.hidden2 = (
-                torch.zeros(1, 1, self.hidden_size2).cuda(),
-                torch.zeros(1, 1, self.hidden_size2).cuda()
-            )
-        else:
-            self.hidden1 = (
-                torch.zeros(1, 1, self.hidden_size1),
-                torch.zeros(1, 1, self.hidden_size1)
-            )
-            self.hidden2 = (
-                torch.zeros(1, 1, self.hidden_size2),
-                torch.zeros(1, 1, self.hidden_size2)
-            )
+    def init_hidden(self, device='cpu'):
+        self.hidden1 = (
+            torch.zeros(1, 1, self.hidden_size1).to(device),
+            torch.zeros(1, 1, self.hidden_size1).to(device)
+        )
+        self.hidden2 = (
+            torch.zeros(1, 1, self.hidden_size2).to(device),
+            torch.zeros(1, 1, self.hidden_size2).to(device)
+        )
 
     def forward(self, X):
         # X1, X2 = torch.split(X, [self.input_size1, self.input_size2], dim=1)
@@ -77,7 +69,7 @@ def train_model(model, train_dataset, optimizer, loss_fn, n_epochs=10,
             # print(labels.is_cuda)
             # print(labels.dtype)
             model.zero_grad()
-            model.init_hidden(cuda=True)
+            model.init_hidden(device='cuda')
             # model.init_hidden()
             out1, out2 = model(audio)
             loss1 = loss_fn(out1, labels)
